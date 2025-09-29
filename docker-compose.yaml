@@ -52,8 +52,6 @@ services:
 
 volumes:
   pgdata:
-    external: true
     name: caitmoe_docker_pgdata
   pgadmin:
-    external: true
     name: caitmoe_docker_pgadmin

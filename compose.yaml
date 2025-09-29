@@ -1,0 +1,59 @@
+# https://developers.cloudflare.com/fundamentals/reference/network-ports/
+
+services:
+  db:
+    container_name: postgresSQL-17
+    image: postgres:17
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "500:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  pgadmin:
+    container_name: pgadmin4-8.13
+    image: dpage/pgadmin4:8.13
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    depends_on:
+      - db
+
+  nginx-caitmoe:
+    container_name: nginx-caitmoe
+    image: nginx:1.27.4
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - type: bind
+        source: /var/www/caitmoe
+        target: /var/www/caitmoe
+      - type: bind
+        source: ./nginx.conf
+        target: /etc/nginx/conf.d/default.conf
+      - type: bind
+        source: /etc/letsencrypt
+        target: /etc/letsencrypt
+    links:
+      - db
+    depends_on:
+      - db
+
+volumes:
+  pgdata:
+    external: true
+    name: caitmoe_docker_pgdata
+  pgadmin:
+    external: true
+    name: caitmoe_docker_pgadmin

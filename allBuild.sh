@@ -7,6 +7,6 @@ echo "> cait.moe <"
 
 for dir in "./"*/; do
     if [ -d "$dir" ]; then
-        cd "$dir" && bash build.sh
+        (cd "$dir" && bash build.sh)
     fi
 done
